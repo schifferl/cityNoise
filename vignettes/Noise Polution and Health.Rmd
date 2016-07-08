@@ -1,0 +1,167 @@
+---
+title: "Noise Pollution and Health"
+author: "Lucas Schiffer"
+date: "May 22, 2016"
+output: ioslides_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(ggmap)
+load("bcnp.rda")
+load("nynp.rda")
+load("sfnp.rda")
+dv <- c("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday")
+```
+
+## What is Noise Pollution?
+"... an unwanted sound which gets dumped into [the] environment without regard... to the adverse effects it may be having. It adversely affects the health of a person and produces ill effects in living and non-living things." - Tripathy DP. Noise Pollution. New Delhi: A.P.H. Pub. Corp.; 1999.
+
+## How Does It Impact Health?
+- Stress Related Effects
+- Teratogenic Effects
+- Learning Ability
+- Personal Safety
+- Sleep Disruption
+
+## Trends In 3 US Cities In 2015
+- Baltimore, MD
+- New York, NY
+- San Fransisco, CA
+
+- Summary
+- Location
+- Day of Week
+- Season of Year
+
+## Baltimore, MD Summary
+```{r eval=FALSE}
+gcll <- geocode("Baltimore, MD")
+gcbb <- c(left = gcll$lon*1.2, bottom = gcll$lat*0.8, right = gcll$lon*0.8, top = gcll$lat*1.2)
+gcgm <- get_stamenmap(gcbb, zoom = 7, maptype = "toner-background")
+ggmap(gcgm, extent = "device") + geom_point(aes(x = lon, y = lat), data = gcll, colour = "red", size = 5)
+```
+- GDP (2014 Est.) <- $173,747 (PPP, $M)
+- GDP / Capita (2014 Est.) <- $62,291 (PPP, $M)
+- Population (2014 Est.) <- 2,789,289
+- Noise Complaints (2015 Est.) <- 198
+
+## Baltimore, MD Location
+```{r eval=FALSE}
+llld <- subset(bcnp, select = c("longitude", "latitude"))
+colnames(llld) <- c("lon", "lat")
+llld$lon <- as.numeric(llld$lon)
+llld$lat <- as.numeric(llld$lat)
+qmplot(lon, lat, data = llld, geom = "blank", zoom = 15, maptype = "toner-background") +
+  stat_density_2d(aes(fill = ..level..), geom = "polygon", alpha = .3, color = NA) +
+  scale_fill_gradient2("", low = "white", mid = "yellow", high = "red", guide = FALSE)
+```
+
+## Baltimore, MD Day of Week
+```{r}
+dotw_ds <- bcnp$date
+dotw_df <- as.data.frame(table(as.character(lapply(dotw_ds, function(x) weekdays(as.Date(as.character(x), "%m/%d/%Y"))))))
+dotw_cv <- as.character(lapply(dotw_ds, function(x) weekdays(as.Date(as.character(x), "%m/%d/%Y"))))
+qplot(dotw_cv, geom = "bar", main = "", xlab = "", ylab = "") + coord_flip() + theme_minimal() + scale_x_discrete(limits=rev(dv)) #+ scale_x_discrete(limits=dotw_df[order(dotw_df[,2]),]$Var1)
+```
+
+## Baltimore, MD Season of Year
+```{r eval = FALSE}
+moty_ds <- bcnp$date
+moty_df <- as.data.frame(table(as.character(lapply(moty_ds, function(x) months(as.Date(as.character(x), "%m/%d/%Y"))))))
+moty_cv <- as.character(lapply(moty_ds, function(x) months(as.Date(as.character(x), "%m/%d/%Y"))))
+qplot(moty_cv, geom = "bar", main = "", xlab = "", ylab = "") + scale_x_discrete(limits=sort(factor(moty_df$Var1, levels = month.name))) + theme_minimal() + theme(axis.text.x=element_text(angle = -45, hjust = 0))
+```
+
+## New York, NY Summary
+```{r eval=FALSE}
+gcll <- geocode("New York, NY")
+gcbb <- c(left = gcll$lon*1.2, bottom = gcll$lat*0.8, right = gcll$lon*0.8, top = gcll$lat*1.2)
+gcgm <- get_stamenmap(gcbb, zoom = 7, maptype = "toner-background")
+ggmap(gcgm, extent = "device") + geom_point(aes(x = lon, y = lat), data = gcll, colour = "red", size = 5)
+```
+- GDP (2014 Est.) <- $1,403,463 (PPP, $M)
+- GDP / Capita (2014 Est.) <- $69,915 (PPP, $M)
+- Population (2014 Est.) <- 20,073,930
+- Noise Complaints (2015 Est.) <- 176,691
+
+## New York, NY Location
+```{r eval=FALSE}
+llld <- subset(nynp, select = c("longitude", "latitude"))
+colnames(llld) <- c("lon", "lat")
+llld$lon <- as.numeric(llld$lon)
+llld$lat <- as.numeric(llld$lat)
+qmplot(lon, lat, data = llld, geom = "blank", zoom = 15, maptype = "toner-background") +
+  stat_density_2d(aes(fill = ..level..), geom = "polygon", alpha = .3, color = NA) +
+  scale_fill_gradient2("", low = "white", mid = "yellow", high = "red", guide = FALSE)
+```
+
+## New York, NY Day of Week
+```{r}
+dotw_ds <- nynp$date
+dotw_df <- as.data.frame(table(as.character(lapply(dotw_ds, function(x) weekdays(as.Date(as.character(x), "%m/%d/%Y"))))))
+dotw_cv <- as.character(lapply(dotw_ds, function(x) weekdays(as.Date(as.character(x), "%m/%d/%Y"))))
+qplot(dotw_cv, geom = "bar", main = "", xlab = "", ylab = "") + coord_flip() + theme_minimal() + scale_x_discrete(limits=rev(dv)) #+ scale_x_discrete(limits=dotw_df[order(dotw_df[,2]),]$Var1)
+```
+
+## New York, NY Season of Year
+```{r eval = FALSE}
+moty_ds <- nynp$date
+moty_df <- as.data.frame(table(as.character(lapply(moty_ds, function(x) months(as.Date(as.character(x), "%m/%d/%Y"))))))
+moty_cv <- as.character(lapply(moty_ds, function(x) months(as.Date(as.character(x), "%m/%d/%Y"))))
+qplot(moty_cv, geom = "bar", main = "", xlab = "", ylab = "") + scale_x_discrete(limits=sort(factor(moty_df$Var1, levels = month.name))) + theme_minimal() + theme(axis.text.x=element_text(angle = -45, hjust = 0))
+```
+
+
+## San Fransisco, CA Summary
+```{r  eval=FALSE}
+gcll <- geocode("San Francisco, CA")
+gcbb <- c(left = gcll$lon*1.2, bottom = gcll$lat*0.8, right = gcll$lon*0.8, top = gcll$lat*1.2)
+gcgm <- get_stamenmap(gcbb, zoom = 7, maptype = "toner-background")
+ggmap(gcgm, extent = "device") + geom_point(aes(x = lon, y = lat), data = gcll, colour = "red", size = 5)
+```
+- GDP (2014 Est.) <- $331,024 (PPP, $M)
+- GDP / Capita (2014 Est.) <- $72,390 (PPP, $M)
+- Population (2014 Est.) <- 4,572,807
+- Noise Complaints (2015 Est.) <- 792
+
+## San Fransisco, CA Location
+```{r eval=FALSE}
+llld <- subset(sfnp, select = c("longitude", "latitude"))
+colnames(llld) <- c("lon", "lat")
+llld$lon <- as.numeric(llld$lon)
+llld$lat <- as.numeric(llld$lat)
+qmplot(lon, lat, data = llld, geom = "blank", zoom = 15, maptype = "toner-background") +
+  stat_density_2d(aes(fill = ..level..), geom = "polygon", alpha = .3, color = NA) +
+  scale_fill_gradient2("", low = "white", mid = "yellow", high = "red", guide = FALSE)
+```
+
+## San Fransisco, CA Day of Week
+```{r}
+dotw_ds <- sfnp$date
+dotw_df <- as.data.frame(table(as.character(lapply(dotw_ds, function(x) weekdays(as.Date(as.character(x), "%m/%d/%Y"))))))
+dotw_cv <- as.character(lapply(dotw_ds, function(x) weekdays(as.Date(as.character(x), "%m/%d/%Y"))))
+qplot(dotw_cv, geom = "bar", main = "", xlab = "", ylab = "") + coord_flip() + theme_minimal() + scale_x_discrete(limits=rev(dv)) #+ scale_x_discrete(limits=dotw_df[order(dotw_df[,2]),]$Var1)
+```
+
+## San Fransisco, CA Season of Year
+```{r eval = FALSE}
+moty_ds <- c(sfnp$date, "01/01/2015", "02/01/2015", "03/01/2015", "04/01/2015", "05/01/2015", "06/01/2015", "07/01/2015")
+moty_df <- as.data.frame(table(as.character(lapply(moty_ds, function(x) months(as.Date(as.character(x), "%m/%d/%Y"))))))
+moty_cv <- as.character(lapply(moty_ds, function(x) months(as.Date(as.character(x), "%m/%d/%Y"))))
+qplot(moty_cv, geom = "bar", main = "", xlab = "", ylab = "") + scale_x_discrete(limits=sort(factor(moty_df$Var1, levels = month.name))) + theme_minimal() + theme(axis.text.x=element_text(angle = -45, hjust = 0))
+```
+
+## Compartive Noise Polution Per Capita
+- Baltimore, MD <- 7.10 / 100,000
+- New York, NY <- 880.20 / 100,000
+- San Fransisco, CA <-  17.32 / 100,000
+
+## References
+```{r eval = FALSE}
+citation("base")
+citation("downloader")
+citation("data.table")
+citation("stringr")
+citation("ggmap")
+```
