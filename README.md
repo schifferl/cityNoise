@@ -1,8 +1,6 @@
 # cityNoise
-Analysis of noise pollution data across 3 US cities
 
-## Introduction
-I have not revisited this project in some time and it may need some tweaks to produce the maps but the fundamental idea of analyzing a large volume of data is still there.
+This repository is very old and has been archived.
 
 ## Data Sources
 Data are retrieved from open data portals of Baltimore, MD; New York, NY; and San Fransisco, CA. The links for the portals are shown below. The csv files represent 311 calls, which are then subset to include only noise complaints.
